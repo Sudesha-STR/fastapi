@@ -77,13 +77,11 @@ starlette==0.37.2
 thinc==8.2.3
 threadpoolctl==3.5.0
 tqdm==4.66.4
-typer
 typing_extensions==4.12.0
 ujson==5.10.0
 uritemplate==4.1.1
 urllib3==2.2.1
 uvicorn==0.30.0
 wasabi==1.1.3
-weasel
 watchfiles==0.22.0
 websockets==12.0
