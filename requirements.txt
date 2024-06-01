@@ -17,7 +17,7 @@ email_validator==2.1.1
 en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
 exceptiongroup==1.2.1
 fastapi==0.111.0
-fastapi-cli==0.0.4
+fastapi-cli
 google-ai-generativelanguage==0.6.4
 google-api-core==2.19.0
 google-api-python-client==2.131.0
