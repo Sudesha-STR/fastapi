@@ -212,6 +212,10 @@ category_mapping = {
     'Testing': 17
 }
 
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Resume Evaluator API"}
+
 @app.post("/parse_pdf")
 async def parse_pdf(file: UploadFile = File(...)):
     if file.filename.endswith('.pdf'):
