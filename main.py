@@ -47,8 +47,8 @@ except OSError:
     spacy.cli.download(spacy_model)
     nlp = spacy.load(spacy_model)
 
-clf = pickle.load(open('clf.pkl', 'rb'))
-tfidf = pickle.load(open('tfidf.pkl', 'rb'))
+clf = pickle.load(open(r'D:\Cloned Repos\resume-analyzer\resume-analyser\clf.pkl', 'rb'))
+tfidf = pickle.load(open(r'D:\Cloned Repos\resume-analyzer\resume-analyser\tfidf.pkl', 'rb'))
 
 input_prompt = """
 Hey Act Like a skilled or very experience ATS(Application Tracking System)
@@ -65,17 +65,19 @@ I want the response in one single string having the structure
 {{"JD Match":"%","MissingKeywords:[]","Profile Summary":""}}
 """
 
+
 def get_gemini_response(input):
     model = genai.GenerativeModel('gemini-pro')
     response = model.generate_content(input)
     return response.text
+
 
 def pdf_reader(file_path):
     resource_manager = PDFResourceManager()
     fake_file_handle = io.StringIO()
     converter = TextConverter(resource_manager, fake_file_handle, laparams=LAParams())
     page_interpreter = PDFPageInterpreter(resource_manager, converter)
-    
+
     with open(file_path, 'rb') as fh:
         for page in PDFPage.get_pages(fh, caching=True, check_extractable=True):
             page_interpreter.process_page(page)
@@ -83,23 +85,25 @@ def pdf_reader(file_path):
 
     converter.close()
     fake_file_handle.close()
-    
+
     return text
 
+
 def clean_resume(resume_text):
-    clean_txt = re.sub('http\S+\s*', ' ', resume_text)  
-    clean_txt = re.sub('@\S+', ' ', clean_txt) 
-    clean_txt = re.sub('[0-9]+', ' ', clean_txt)  
-    clean_txt = re.sub('#\S+\s', ' ', clean_txt) 
-    clean_txt = re.sub('RT|cc', ' ', clean_txt)  
-    clean_txt = re.sub('[!"$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]', ' ', clean_txt) 
-    clean_txt = re.sub('\s+', ' ', clean_txt)  
-    clean_txt = re.sub('\n', ' ', clean_txt)  
-    clean_txt = re.sub('\w*\d\w*', ' ', clean_txt)  
-    clean_txt = re.sub(' +', ' ', clean_txt)  
-    clean_txt = clean_txt.lower()  
+    clean_txt = re.sub('http\S+\s*', ' ', resume_text)
+    clean_txt = re.sub('@\S+', ' ', clean_txt)
+    clean_txt = re.sub('[0-9]+', ' ', clean_txt)
+    clean_txt = re.sub('#\S+\s', ' ', clean_txt)
+    clean_txt = re.sub('RT|cc', ' ', clean_txt)
+    clean_txt = re.sub('[!"$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]', ' ', clean_txt)
+    clean_txt = re.sub('\s+', ' ', clean_txt)
+    clean_txt = re.sub('\n', ' ', clean_txt)
+    clean_txt = re.sub('\w*\d\w*', ' ', clean_txt)
+    clean_txt = re.sub(' +', ' ', clean_txt)
+    clean_txt = clean_txt.lower()
     clean_txt = clean_txt.strip()
     return clean_txt
+
 
 def extract_skills(resume_text):
     skill_keywords = {
@@ -152,31 +156,38 @@ def extract_skills(resume_text):
         'Blockchain': ['Blockchain Technology', 'Smart Contracts', 'Cryptography'],
         'Testing': ['Software Testing', 'Manual Testing', 'Test Planning']
     }
-    
+
     tokens = nltk.word_tokenize(resume_text.lower())
     found_skills = set()
-    
+
     for category, skills in skill_keywords.items():
         for skill in skills:
             if skill.lower() in tokens:
                 print(f"Skill found: {skill}")
                 found_skills.add(skill)
-    
+
     return list(found_skills)
+
 
 def extract_info(resume_text):
     nlp_text = nlp(resume_text)
     names = [ent.text.replace(' ', '') for ent in nlp_text.ents if ent.label_ == 'PERSON']
     emails = re.findall(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', resume_text)
     phones = re.findall(r'\b\d{10}\b', resume_text)
-    skills = extract_skills(resume_text)  
-    
+    skills = extract_skills(resume_text)
+
     return {
         "names": names,
         "emails": emails,
         "phones": phones,
         "skills": skills
     }
+
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Resume Evaluator API"}
+
 
 @app.post("/extract-info/")
 async def extract_resume_info(file: UploadFile):
@@ -186,6 +197,7 @@ async def extract_resume_info(file: UploadFile):
     resume_text = pdf_reader(temp_file_path)
     resume_text = clean_resume(resume_text)
     return extract_info(resume_text)
+
 
 @app.post("/evaluate-resume/")
 async def evaluate_resume(resume: UploadFile, job_description: str = Form(...)):
@@ -197,6 +209,8 @@ async def evaluate_resume(resume: UploadFile, job_description: str = Form(...)):
     prompt = input_prompt.format(text=resume_text, jd=job_description)
     return {"evaluation": get_gemini_response(prompt)}
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
