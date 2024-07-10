@@ -131,7 +131,7 @@ opencv-python==4.7.0.72
 orjson==3.10.2
 overrides==7.7.0
 packaging==23.2
-pandas==2.0.1
+pandas
 pandocfilters==1.5.1
 parso==0.8.4
 pdfminer==20191125
