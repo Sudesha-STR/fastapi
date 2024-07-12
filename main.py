@@ -47,8 +47,8 @@ except OSError:
     spacy.cli.download(spacy_model)
     nlp = spacy.load(spacy_model)
 
-clf = pickle.load(open(r'D:\Cloned Repos\resume-analyzer\resume-analyser\clf.pkl', 'rb'))
-tfidf = pickle.load(open(r'D:\Cloned Repos\resume-analyzer\resume-analyser\tfidf.pkl', 'rb'))
+clf = pickle.load(open(r'clf.pkl', 'rb'))
+tfidf = pickle.load(open(r'tfidf.pkl', 'rb'))
 
 input_prompt = """
 Hey Act Like a skilled or very experience ATS(Application Tracking System)
