@@ -135,7 +135,6 @@ pandocfilters==1.5.1
 parso==0.8.4
 pdfminer==20191125
 pdfminer.six==20231228
-Pillow==9.5.0
 platformdirs==3.2.0
 preshed==3.0.9
 prometheus_client==0.20.0
