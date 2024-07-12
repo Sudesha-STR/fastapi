@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+scikit-learn
+spacy
+pdfminer.six
+google-generativeai
+python-dotenv
+nltk
+fpdf
+
