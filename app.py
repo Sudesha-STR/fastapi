@@ -35,7 +35,7 @@ load_dotenv()
 nltk.download('stopwords')
 nltk.download('punkt')
 
-genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
+genai.configure(api_key="AIzaSyAcYr0bQQAomTvaLmZOZbtb8ehdBRkF2Ic")
 
 spacy_model = 'en_core_web_sm'
 try:
